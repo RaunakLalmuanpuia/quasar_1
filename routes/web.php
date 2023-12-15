@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationSeenController;
 use Inertia\Inertia;
@@ -54,3 +55,5 @@ Route::get('report/{report}/Manager', [ReportController::class, 'viewManager'])-
 Route::resource('notification', NotificationController::class)->middleware('auth')->only(['index']);
 
 Route::put('notification/{notification}/seen', NotificationSeenController::class)->middleware('auth')->name('notification.seen');
+
+Route::resource('media', MediaController::class)->middleware('auth');

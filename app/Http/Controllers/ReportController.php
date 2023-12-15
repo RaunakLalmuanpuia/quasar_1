@@ -273,7 +273,7 @@ class ReportController extends Controller
      */
     public function show(Report $report)
     {
-        // dd($report);
+        dd($report);
         if (Auth::user()->hasRole('manager')) {
             $report->load(['employee', 'employer']);
             // dd($report);
@@ -281,15 +281,15 @@ class ReportController extends Controller
                 'report' => $report
             ]);
         }
-        $filepath = $report->employee_file;
-        $fileExtension = pathinfo($filepath, PATHINFO_EXTENSION);
-        if (in_array($fileExtension, ['pdf', 'jpg', 'jpeg', 'png', 'gif'])) {
-            // View the file
-            return response()->file(storage_path('app/' . $filepath));
-        } else {
-            // Download the file with the extension name
-            return Storage::download($filepath, $report->name . '.' . $fileExtension);
-        }
+        // $filepath = $report->employee_file;
+        // $fileExtension = pathinfo($filepath, PATHINFO_EXTENSION);
+        // if (in_array($fileExtension, ['pdf', 'jpg', 'jpeg', 'png', 'gif'])) {
+        //     // View the file
+        //     return response()->file(storage_path('app/' . $filepath));
+        // } else {
+        //     // Download the file with the extension name
+        //     return Storage::download($filepath, $report->name . '.' . $fileExtension);
+        // }
     }
 
     /**

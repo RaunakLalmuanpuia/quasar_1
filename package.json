@@ -23,6 +23,7 @@
     },
     "dependencies": {
         "@quasar/extras": "^1.16.8",
-        "quasar": "^2.14.0"
+        "quasar": "^2.14.0",
+        "vue3-youtube": "^0.1.9"
     }
 }
