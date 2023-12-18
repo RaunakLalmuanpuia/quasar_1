@@ -1,12 +1,14 @@
 <?php
 
-use App\Http\Controllers\MediaController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\NotificationSeenController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\NotificationSeenController;
+use App\Models\Gallery;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,8 +45,9 @@ Route::resource('report', ReportController::class)->middleware([
     config('jetstream.auth_session'),
     'verified',
 ]);
+Route::post('update_gallery/{gallery}', [GalleryController::class, 'update_gallery'])->name('update_gallery');
 
-Route::post('update_employee/{report}/employee', [ReportController::class, 'update_employee'])->name('update_employee');
+Route::post('update_employee/{report}', [ReportController::class, 'update_employee'])->name('update_employee');
 
 Route::get('report/{report}/employee', [ReportController::class, 'viewEmployee'])->name('report.employee.show')->middleware('auth');
 Route::get('report/{report}/employer', [ReportController::class, 'viewEmployer'])->name('report.employer.show')->middleware('auth');
@@ -56,4 +59,8 @@ Route::resource('notification', NotificationController::class)->middleware('auth
 
 Route::put('notification/{notification}/seen', NotificationSeenController::class)->middleware('auth')->name('notification.seen');
 
-Route::resource('media', MediaController::class)->middleware('auth');
+Route::resource('gallery', GalleryController::class)->middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+]);

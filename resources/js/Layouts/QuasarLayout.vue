@@ -87,8 +87,13 @@
                 />
                 <q-route-tab
                     v-if="$page.props.user.roles.includes('admin')"
-                    :href="route('media.create')"
-                    label="Media"
+                    :href="route('gallery.create')"
+                    label="Gallery"
+                />
+                <q-route-tab
+                    v-if="!$page.props.user.roles.includes('admin')"
+                    :href="route('gallery.index')"
+                    label="Gallery"
                 />
                 <q-route-tab to="/page3" label="Contact" />
             </q-tabs>

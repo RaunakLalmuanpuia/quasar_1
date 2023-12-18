@@ -273,7 +273,7 @@ class ReportController extends Controller
      */
     public function show(Report $report)
     {
-        dd($report);
+        // dd($report);
         if (Auth::user()->hasRole('manager')) {
             $report->load(['employee', 'employer']);
             // dd($report);
@@ -315,7 +315,7 @@ class ReportController extends Controller
     public function update(Request $request, Report $report)
     {
 
-        dd($request);
+        // dd($request);
         if (Auth::user()->hasRole('employee')) {
             // dd($request->file_name);
             // dd($request->filepath);
@@ -379,8 +379,6 @@ class ReportController extends Controller
         
         if (Auth::user()->hasRole('employee')) {
             $report->name = $request->file_name;
-            
-            
             // $file = $request->file('filepath');
             // $filepath = $file->store('public/reports');
             // $report->employee_file = $filepath;
