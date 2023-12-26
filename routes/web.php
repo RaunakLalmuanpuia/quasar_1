@@ -1,14 +1,16 @@
 <?php
 
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\MediaController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationSeenController;
-use App\Models\Gallery;
+use App\Http\Controllers\PaytmController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +58,6 @@ Route::get('report/{report}/Manager', [ReportController::class, 'viewManager'])-
 // Route::get('', [NotificationController::class, 'index'])->name('asd');
 
 Route::resource('notification', NotificationController::class)->middleware('auth')->only(['index']);
-
 Route::put('notification/{notification}/seen', NotificationSeenController::class)->middleware('auth')->name('notification.seen');
 
 Route::resource('gallery', GalleryController::class)->middleware([
@@ -64,3 +65,42 @@ Route::resource('gallery', GalleryController::class)->middleware([
     config('jetstream.auth_session'),
     'verified',
 ]);
+
+Route::resource('users', UserController::class)->middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+]);
+
+Route::get('/setup', function () {
+    $credentials = [
+        'email' => 'admin@admin.com',
+        'password' => 'password'
+    ];
+    if (!Auth::attempt($credentials)) {
+        $user = new \App\Models\User();
+
+        $user->name = 'Adminn';
+        $user->email = $credentials['email'];
+        $user->password = Hash::make($credentials['password']);
+
+        $user->save();
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            $adminToken = $user->createToken('admin-token', ['create', 'update', 'delete']);
+            $updateToken = $user->createToken('update-token', ['create', 'update',]);
+            $basicToken = $user->createToken('basic-token');
+
+            return [
+                'admin' => $adminToken->plainTextToken,
+                'update' => $updateToken->plainTextToken,
+                'basic' => $basicToken->plainTextToken,
+            ];
+        }
+    }
+});
+
+Route::get('initiate', [PaytmController::class, 'initiate'])->name('initiate.payment');
+Route::post('payment', [PaytmController::class, 'pay'])->name('make.payment');

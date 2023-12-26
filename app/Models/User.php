@@ -68,8 +68,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Report::class);
     }
-    // public function media(): HasMany
-    // {
-    //     return $this->hasMany(Media::class);
-    // }
 }

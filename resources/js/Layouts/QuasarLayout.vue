@@ -95,6 +95,17 @@
                     :href="route('gallery.index')"
                     label="Gallery"
                 />
+                <q-route-tab
+                    v-if="$page.props.user.roles.includes('admin')"
+                    :href="route('gallery.create')"
+                    label="Users"
+                />
+
+                <q-route-tab
+                    v-if="$page.props.user.roles.length == 0"
+                    :href="route('users.create')"
+                    label="Apply"
+                />
                 <q-route-tab to="/page3" label="Contact" />
             </q-tabs>
         </q-header>
