@@ -11,6 +11,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationSeenController;
 use App\Http\Controllers\PaytmController;
+use App\Http\Controllers\AttendenceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,7 @@ Route::resource('report', ReportController::class)->middleware([
     config('jetstream.auth_session'),
     'verified',
 ]);
+
 Route::post('update_gallery/{gallery}', [GalleryController::class, 'update_gallery'])->name('update_gallery');
 
 Route::post('update_employee/{report}', [ReportController::class, 'update_employee'])->name('update_employee');
@@ -66,11 +68,13 @@ Route::resource('gallery', GalleryController::class)->middleware([
     'verified',
 ]);
 
+
 Route::resource('users', UserController::class)->middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ]);
+
 
 Route::get('/setup', function () {
     $credentials = [
@@ -104,3 +108,9 @@ Route::get('/setup', function () {
 
 Route::get('initiate', [PaytmController::class, 'initiate'])->name('initiate.payment');
 Route::post('payment', [PaytmController::class, 'pay'])->name('make.payment');
+
+
+Route::get('showqr', [AttendenceController::class, 'showQr'])->name('showQr');
+Route::get('scanqr', [AttendenceController::class, 'scanQr'])->name('scanQr');
+
+Route::post('/decrypt-data', [AttendenceController::class, 'decryptData']);

@@ -33,7 +33,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //Apply for role
+        
+        if ($request->post_name == "manager") {
+            dd($request->post_name);
+        }
+        else{
+            dd($request);
+        }
     }
 
     /**

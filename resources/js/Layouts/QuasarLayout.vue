@@ -107,6 +107,19 @@
                     label="Apply"
                 />
                 <q-route-tab to="/page3" label="Contact" />
+                <q-route-tab
+                    v-if="$page.props.user.roles.length == 0"
+                    :href="route('showqr')"
+                    label="Apply"
+                />
+                <q-route-tab to="/page3" label="View QR" />
+                <q-route-tab
+                    v-if="$page.props.user.roles.length == 0"
+                    :href="route('scanqr')"
+                    label="Apply"
+                />
+                <q-route-tab to="/page3" label="Scan QR" />
+                
             </q-tabs>
         </q-header>
 

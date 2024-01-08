@@ -20,7 +20,7 @@
 
         <div v-if="selectedRole === 'employee'">
             <!-- Form for Role 1 -->
-            <form @submit.prevent="EmployeeForm">
+            <form @submit.prevent="submitForm">
                 <!-- Form fields for Role 1 -->
                 <!-- ... -->
                 <button type="submit">Submit Role Employee</button>
@@ -29,7 +29,7 @@
 
         <div v-if="selectedRole === 'employer'">
             <!-- Form for Role 2 -->
-            <form @submit.prevent="EmployerForm">
+            <form @submit.prevent="submitForm">
                 <!-- Form fields for Role 2 -->
                 <!-- ... -->
                 <button type="submit">Submit Role Employer</button>
@@ -37,7 +37,7 @@
         </div>
         <div v-if="selectedRole === 'manager'">
             <!-- Form for Role 2 -->
-            <form @submit.prevent="ManagerForm">
+            <form @submit.prevent="submitForm">
                 <!-- Form fields for Role 2 -->
                 <!-- ... -->
                 <button type="submit">Submit Role Manager</button>
@@ -47,25 +47,23 @@
 </template>
 <script setup>
 import QuasarLayout from "@/Layouts/QuasarLayout.vue";
+import { useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 
 const props = defineProps({
     role: Object,
 });
-
+const form = useForm({
+    name: "",
+    post: "",
+    id: "",
+    post_name: "",
+})
 const selectedRole = ref("");
 
-const EmployeeForm = () => {
-    // Handle form submission for Role 1
+const submitForm = () => {
+    form.post_name = selectedRole.value;
+    form.post(route('users.store'));
     console.log("Employee form submitted");
-};
-
-const EmployerForm = () => {
-    // Handle form submission for Role 2
-    console.log("Employer form submitted");
-};
-const ManagerForm = () => {
-    // Handle form submission for Role 2
-    console.log("Manager form submitted");
 };
 </script>
