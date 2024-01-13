@@ -112,5 +112,6 @@ Route::post('payment', [PaytmController::class, 'pay'])->name('make.payment');
 
 Route::get('showqr', [AttendenceController::class, 'showQr'])->name('showQr');
 Route::get('scanqr', [AttendenceController::class, 'scanQr'])->name('scanQr');
+Route::post('attendence', [AttendenceController::class, 'markAttendence'])->name('attendence');
 
-Route::post('/decrypt-data', [AttendenceController::class, 'decryptData']);
+
