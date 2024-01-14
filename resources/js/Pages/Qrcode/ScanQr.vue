@@ -1,7 +1,7 @@
 <!-- Vue QR Scanner  -->
 <template>
   <QuasarLayout>
-   <div
+    <div
          v-if="$page.props.flash.message"
          class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
          role="alert"
@@ -9,18 +9,25 @@
          <span class="font-medium">
              {{ $page.props.flash.message }}
          </span>
+    </div>
+
+
+     <div v-if="$page.props.flash.message !='Password verification successful'" class="mx-auto max-w-md p-4 bg-gray-100 rounded-md">
+        <input v-model="passwordForm.enteredPassword" type="password" placeholder="Enter password" class="mt-2 p-2 border rounded">
+        <button @click="verifyPassword" class="mt-2 p-2 bg-blue-500 text-white rounded">Verify Password</button>
      </div>
+    
    
-   <div class="mx-auto max-w-md p-4 bg-gray-100 rounded-md">
-             <div v-if="!decodedText2" class="mb-4">
-             <StreamBarcodeReader @decode="onDecode" @loaded="onLoaded" ></StreamBarcodeReader>
-             </div>
-             
-             <div v-if="decodedText !== ''" class="bg-white rounded-md p-4">
-             <h2 class="text-xl font-bold mb-2">The decoded value in QR/barcode is</h2>
-             <h2 class="text-lg">{{ decodedText }}</h2>
-             </div>
-     </div>
+    <div v-if="$page.props.flash.message =='Password verification successful'">
+      <div class="mx-auto max-w-md p-4 bg-gray-100 rounded-md">
+          <div v-if="!decodedText2" class="mb-4">
+              <StreamBarcodeReader @decode="onDecode" @loaded="onLoaded" ></StreamBarcodeReader>
+          </div>
+          <div v-if="decodedText !== ''" class="bg-white rounded-md p-4">
+              <h2 class="text-lg">{{ decodedText }}</h2>
+          </div>
+      </div>
+   </div>
 </QuasarLayout>
 </template>
 
@@ -35,6 +42,7 @@ import { usePage, useForm } from '@inertiajs/vue3';
 
 // Retrieve props passed by Inertia
 // const { props } = usePage();
+const page = usePage()
 
 const form = useForm({
  date: "",
@@ -43,7 +51,14 @@ const form = useForm({
  longitude: ""
 });
 
+const passwordForm = useForm({
+  userId: page.props.auth.user.id,
+  enteredPassword:""
+});
 
+
+
+console.log(page.props.auth.user.id);
 
 const decodedText = ref("");
 const decodedText2 = ref(false);
@@ -80,7 +95,7 @@ if (match && match.length === 3) {
        // Check if the user is within 50 meters of the scanned location
        if (distance <= 50) { // 50 meters radius
          console.log('Scanned location is within 50 meters of the user');
-         decodedText.value  = "Scanned location is within 50 meters of the user";
+        //  decodedText.value  = "Scanned location is within 50 meters of the user";
          // Allow access or perform further actions
 
          // Store current date, time, and location in the form
@@ -113,27 +128,28 @@ if (match && match.length === 3) {
  }
 }
 };
+
 // Function to calculate distance between two points
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
-
 // Haversine formula or any other distance calculation logic
  const earthRadius = 6371000; // Radius of the Earth in meters
 
 const toRadians = (angle) => {
  return angle * (Math.PI / 180);
 };
-
 const deltaLat = toRadians(lat2 - lat1);
 const deltaLon = toRadians(lon2 - lon1);
 const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
          Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
          Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
 const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
 const distance = earthRadius * c; // Distance in meters
 
 return distance;
 };
 
+const verifyPassword = () => {
+  passwordForm.post(route("verifyPassword"));
+}
 
 </script>

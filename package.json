@@ -24,6 +24,7 @@
     "dependencies": {
         "@quasar/extras": "^1.16.8",
         "crypto-js": "^4.2.0",
+        "qrcode.vue": "^3.4.1",
         "quasar": "^2.14.0",
         "vue-barcode-reader": "^1.0.3",
         "vue3-youtube": "^0.1.9"
