@@ -101,25 +101,27 @@
                     label="Users"
                 />
 
-                <q-route-tab
-                    v-if="$page.props.user.roles.length == 0"
-                    :href="route('users.create')"
-                    label="Apply"
-                />
                 <q-route-tab to="/page3" label="Contact" />
                 <q-route-tab
                     v-if="$page.props.user.roles.length == 0"
-                    :href="route('showqr')"
-                    label="Apply"
+                    :href="route('showQr')"
+                    label="Show QR"
                 />
-                <q-route-tab to="/page3" label="View QR" />
                 <q-route-tab
                     v-if="$page.props.user.roles.length == 0"
-                    :href="route('scanqr')"
+                    :href="route('scanQr')"
+                    label="Scan QR"
+                />
+                <q-route-tab
+                    v-if="$page.props.user.roles.includes('admin')"
+                    :href="route('applyRole.create')"
+                    label="Approve Users"
+                />
+                <q-route-tab
+                    v-if="$page.props.user.roles.length == 0"
+                    :href="route('applyRole.create')"
                     label="Apply"
                 />
-                <q-route-tab to="/page3" label="Scan QR" />
-                
             </q-tabs>
         </q-header>
 

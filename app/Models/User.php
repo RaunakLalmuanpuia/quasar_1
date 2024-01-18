@@ -11,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -73,5 +74,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Attendence::class);
     }
-    
+    public function applyRole() : HasOne
+    {
+        return $this->hasOne(ApplyRole::class);
+    }
 }

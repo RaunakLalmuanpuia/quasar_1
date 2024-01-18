@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\ApplyRoleController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\NotificationController;
@@ -69,11 +69,11 @@ Route::resource('gallery', GalleryController::class)->middleware([
 ]);
 
 
-Route::resource('users', UserController::class)->middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-]);
+// Route::resource('users', UserController::class)->middleware([
+//     'auth:sanctum',
+//     config('jetstream.auth_session'),
+//     'verified',
+// ]);
 
 
 Route::get('/setup', function () {
@@ -115,3 +115,9 @@ Route::get('scanqr', [AttendenceController::class, 'scanQr'])->name('scanQr');
 Route::post('attendence', [AttendenceController::class, 'markAttendence'])->name('attendence');
 
 Route::post('/verify-password', [AttendenceController::class, 'verifyPassword'])->name('verifyPassword');
+
+Route::resource('applyRole', ApplyRoleController::class)->middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+]);
