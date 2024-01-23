@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
-
+use Spatie\Permission\Models\Permission;
 
 class ApplyRoleController extends Controller
 {
@@ -75,7 +75,7 @@ class ApplyRoleController extends Controller
      */
     public function show(ApplyRole $applyRole)
     {
-        //
+        
     }
 
     /**
@@ -117,4 +117,70 @@ class ApplyRoleController extends Controller
     {
         //
     }
+    public function roles()
+     {
+         $roles = Role::with('permissions')->get();
+         return Inertia::render('Role/Role', [
+             'roles' => $roles
+         ]);
+     }
+     public function storeRole(Request $request){
+         // dd($request);
+         $request->validate([
+             'name' => ['required', 'string'],
+             'permissions' => ['array'],
+         ]);
+
+         $role = Role::create(['name' => $request->input('name')]);
+
+         $role->givePermissionTo($request->input('permissions'));
+
+         return redirect()->route('rolesUser');
+     }
+     public function editRole(Role $role)
+     {
+         $permissions = Permission::pluck('name', 'id');
+
+         return view('PermissionsUI::roles.edit', compact('role', 'permissions'));
+     }
+     public function updateRole(Request $request, Role $role)
+     {
+        //  dd($role);
+         $request->validate([
+             'name' => ['required', 'string'],
+             'permissions' => ['array'],
+         ]);
+
+         $role->update(['name' => $request->input('name')]);
+
+         $role->syncPermissions($request->input('permissions'));
+
+         return redirect()->route('rolesUser');
+     }
+     public function destroyRole(Role $role)
+     {
+         // dd($role);
+         $role->delete();
+         return redirect()->route('rolesUser');
+     }
+     // Apply roles to users
+     public function users()
+     {
+        $roles = Role::pluck('name', 'id');
+        $users = User::with('roles')->paginate(10);
+         return Inertia::render('Role/User', [
+             'users' => $users,
+             'roles' => $roles
+         ]);
+     }
+     public function updateUserRole(Request $request, User $user)
+     {
+         $request->validate([
+             'roles' => ['array'],
+         ]);
+ 
+         $user->syncRoles($request->input('roles'));
+ 
+         return redirect()->route('users');
+     }
 }

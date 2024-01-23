@@ -121,3 +121,12 @@ Route::resource('applyRole', ApplyRoleController::class)->middleware([
     config('jetstream.auth_session'),
     'verified',
 ]);
+//Create , edit, delete roles
+Route::get('role', [ApplyRoleController::class, 'roles'])->name('roles');
+Route::post('role', [ApplyRoleController::class, 'storeRole'])->name('storeRole');
+Route::put('role/{role}', [ApplyRoleController::class, 'updateRole'])->name('updateRole');
+Route::delete('role/{role}', [ApplyRoleController::class, 'destroyRole'])->name('destroyRole');
+
+// Assign roles to users
+Route::get('users', [ApplyRoleController::class, 'users'])->name('users');
+Route::post('users/{users}', [ApplyRoleController::class, 'updateUserRole'])->name('updateUserRole');//Assign user role
