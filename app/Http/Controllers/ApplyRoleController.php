@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use PhpParser\Node\Stmt\Label;
 use Spatie\Permission\Models\Permission;
 
 class ApplyRoleController extends Controller
@@ -115,11 +116,16 @@ class ApplyRoleController extends Controller
      */
     public function destroy(ApplyRole $applyRole)
     {
-        //
+        
     }
+
+    // Role
+    //Role Index
     public function roles()
      {
-         $roles = Role::with('permissions')->get();
+         
+        
+        $roles = Role::with('permissions')->get();
          return Inertia::render('Role/Role', [
              'roles' => $roles
          ]);
@@ -135,7 +141,7 @@ class ApplyRoleController extends Controller
 
          $role->givePermissionTo($request->input('permissions'));
 
-         return redirect()->route('rolesUser');
+         return redirect()->route('roles');
      }
      public function editRole(Role $role)
      {
@@ -155,32 +161,48 @@ class ApplyRoleController extends Controller
 
          $role->syncPermissions($request->input('permissions'));
 
-         return redirect()->route('rolesUser');
+         return redirect()->route('roles');
      }
      public function destroyRole(Role $role)
      {
          // dd($role);
          $role->delete();
-         return redirect()->route('rolesUser');
+         return redirect()->route('roles');
      }
+     
+
      // Apply roles to users
-     public function users()
+     
+     
+     public function users(Request $request)
      {
+        // dd(Auth()->user()->hasRole('admin'));
         $roles = Role::pluck('name', 'id');
-        $users = User::with('roles')->paginate(10);
+        $users = User::query()
+        ->when($request->input('search'),function($query, $search){
+            $query->where('name', 'like', "%{$search}%");
+            $query->orwhere('email', 'like', "%{$search}%");
+            // $query->orwhere('roles', 'like', "%{$search}%");
+        })
+        ->with('roles')
+        ->select('id','name', 'email')
+        ->paginate(10)
+        ->withQueryString();
          return Inertia::render('Role/User', [
              'users' => $users,
-             'roles' => $roles
+             'roles' => $roles,
+             'filters' => $request->only(['search'])
          ]);
      }
+
      public function updateUserRole(Request $request, User $user)
      {
-         $request->validate([
+        $request->validate([
              'roles' => ['array'],
          ]);
- 
-         $user->syncRoles($request->input('roles'));
- 
-         return redirect()->route('users');
+         $user = User::find($request->selectedUser);
+         $user->syncRoles($request->roles);
+         return redirect()->route('usersRole');
      }
+    
 }

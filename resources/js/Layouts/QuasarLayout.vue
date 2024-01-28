@@ -129,8 +129,13 @@
                  />
                  <q-route-tab
                      v-if="$page.props.user.roles.includes('admin')"
-                     :href="route('users')"
+                     :href="route('usersRole')"
                      label="Users"
+                 />
+                 <q-route-tab
+                     v-if="$page.props.user.roles.includes('admin')"
+                     :href="route('users.index')"
+                     label="Create User"
                  />
             </q-tabs>
         </q-header>

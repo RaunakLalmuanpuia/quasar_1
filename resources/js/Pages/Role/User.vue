@@ -1,9 +1,14 @@
 <template>
      <QuasarLayout>
-        <p>User Roles</p>
+      <div class="flex justify-between mt-4">
+        <h3>User Roles</h3>
+        <input v-model="search" type="text" placeholder="Search..." class="border px-2 rounded-lg mr-2">
+      </div>
+       
         <!-- {{ users }} -->
       <!-- {{ roles }} -->
-  <div class="overflow-x-auto">
+  <div class="overflow-x-auto mt-4">
+    
     <table class="w-full table-auto rounded-xl border border-gray-300 bg-white text-left shadow-sm divide-y">
       <thead>
         <tr class="bg-gray-500/5">
@@ -11,11 +16,11 @@
           <th>Name</th>
           <th>Email</th>
           <th>Roles</th>
-          <th>Created At</th>
+          <!-- <th>Created At</th> -->
           <th class="px-4"></th>
         </tr>
       </thead>
-
+      <!-- {{users.data  }} -->
       <tbody class="whitespace-nowrap divide-y">
         <tr v-for="user in users.data" :key="user.id">
           <td class="px-4 py-3">{{ user.id }}</td>
@@ -30,8 +35,16 @@
               {{ role.name }}
             </span>
           </td>
-          <td>{{ user.created_at }}</td>
-          <td class="px-4">
+          <!-- <td>
+            <span
+              v-for="role in user.roles"
+              :key="role.id"
+            >
+              {{ role.created_at }}
+            </span>
+          </td> -->
+          <!-- <td>{{ user.created_at }}</td> -->
+          <td class="px-2">
             <q-btn color="primary" class="mr-2" label="Edit"  @click="editPromptModel(user)"/>
           </td>
         </tr>
@@ -55,52 +68,37 @@
                                 link.active,
                         }"
                         v-html="link.label"
+                        :preserve-state="true"
                     />
                 </div>
             </div>
   </div>
 
-  <q-dialog v-model="editPrompt" >
+  <q-dialog v-model="editPrompt"  >
       <q-card>
         <q-card-section class="q-pa-md">
           <!-- Your edit form -->
-          <form class="space-y-2" >
+          <form class="space-y-2" @submit.prevent="onSubmit">
             <div class="text-base font-medium text-gray-700">Name: <span class="font-bold">{{ selectedUser.name }}</span></div>
 
             <div class="space-y-2" >
                 <label class="block text-base font-medium text-gray-700" >Roles</label>
                 <div class="space-x-2">
-                    <div v-for="role in roles" :key="role.id" class="inline-flex space-x-1">
-                        <!-- <q-checkbox
-                        v-model="updateForm.roles"
-                        :value="role.id"
-                        label-class="text-sm font-medium text-gray-700"
-                        @click="handleRoleClick(role.id)"
-                        >
-                        {{ role }}
-                        </q-checkbox>
-                        <q-select
-                            filled
-                            v-model="multiple"
-                            multiple
-                            :options="options"
-                            label="Multiple"
-                            style="width: 250px"
-                        >{{ role }}</q-select> -->
-                        <q-checkbox
-                            v-model="selectedRoleId"
-                            :val="role.id"
-                            label-class="text-sm font-medium text-gray-700"
-                            @click="selectRole(role)"
-                        >
-                            {{ role }}
-                        </q-checkbox>
-                    </div>
-                    <p v-if="selectedRoleId">Selected Role ID: {{ selectedRoleId }}</p>
-
+                <q-checkbox
+                v-for="role in options"
+                :key="role.value"
+                v-model="updateForm.roles"
+                :val="role.label"
+                :label="role.label"
+              />
+              <!-- <p>{{ updateForm.roles }}</p> -->
                 </div>
-            
-            </div>
+                <!-- <q-checkbox v-model="updateForm.confirm" /> -->
+                <q-toggle
+                v-model="updateForm.confirm"
+                  label="Confirm"
+                />
+              </div>
 
             <button class="rounded-md bg-gray-800 px-4 py-2 text-xs font-semibold text-white hover:bg-gray-700" type="submit">
             SAVE
@@ -116,99 +114,114 @@
 
 <script setup>
 import QuasarLayout from "@/Layouts/QuasarLayout.vue";
-import {Link, useForm} from "@inertiajs/vue3"
-import {ref, computed} from 'vue';
+import {Link, useForm, router} from "@inertiajs/vue3";
+import { throttle, debounce } from "quasar";
+
+import {ref, watch} from 'vue';
+
 
 import { useQuasar } from "quasar";
 const $q = useQuasar();
 
 const props = defineProps({
     users: Object,
-    roles:Object
+    roles:Object,
+    filters: Object
 })
+
+let search = ref(props.filters.search);
+
 const editPrompt = ref(false);
 const selectedUser = ref(null);
+
+const deleteUser = ref(false);
+
+const options = Object.entries(props.roles).map(([roleId, roleName]) => ({
+  label: roleName,
+  value: roleId,
+}));
 
 const updateForm = useForm({
     roles : [],
     selectedUser: "",
+    confirm: false
 
 })
-const selectedRoleId = ref(null);
 
-const selectRole = (roleId) => {
-  selectedRoleId.value = roleId;
-};
-
-
-// const editPromptModel = (user) => {
-//     selectedUser.value = user;
-//     editPrompt.value = true;
-//     console.log(user.name);
-//     updateForm.roles = user.roles.map((role) => role.id);
-//     updateForm.name = user.name;
-//     updateForm.selectedUser = selectedUser.value.id;
-// };
+// For search filter
+watch(search, debounce(function (value){
+  console.log('triggerd');
+  router.get('/usersRole', {search: value},{
+    preserveState:true,
+    replace: true
+  });
+}, 300));
 
 const editPromptModel = (user) => {
-  selectedUser.value = user;
-//   console.log(user.roles.map((role) => role.name));
-  editPrompt.value = true;
-//   console.log(user.roles);
-  updateForm.roles = user.roles.map((role) => role.name);
-//   console.log(updateForm.roles);
-  updateForm.name = user.name;
-  updateForm.selectedUser = selectedUser.value.id;
+    updateForm.roles = user.roles.map((role) =>role.name);
+    selectedUser.value = user;
+    editPrompt.value = true;
+    updateForm.selectedUser = selectedUser.value.id;
 };
-
-// const editPromptModel = (user) => {
-//   // Toggle the selected state of the clicked role
-//   const clickedRoleId = user.roles.map((role) => role.id);
-//   updateForm.roles = updateForm.roles.includes(clickedRoleId)
-//     ? updateForm.roles.filter((roleId) => roleId !== clickedRoleId)
-//     : [...updateForm.roles, clickedRoleId];
-
-//   // Rest of your code...
-//   selectedUser.value = user;
-//   editPrompt.value = true;
-// //   updateForm.name = user.name;
-//   updateForm.selectedUser = selectedUser.value.id;
-// };
-// When a role is clicked, update the selectedRoles array
-
-const handleRoleClick = (roleId) => {
-  // Ensure that updateForm.roles is an array
-  updateForm.roles = Array.isArray(updateForm.roles) ? updateForm.roles : [];
-
-  if (updateForm.roles.includes(roleId)) {
-    // Role is already selected, remove it
-    updateForm.roles = updateForm.roles.filter((id) => id !== roleId);
-  } else {
-    // Role is not selected, add it
-    updateForm.roles.push(roleId);
-  }
-};
-
 
 const onSubmit = () => {
-    if (updateForm.roles !== "") {
-        console.log(selectedUser.value);
+  console.log(updateForm.confirm);
+    if (updateForm.confirm == true) {
         updateForm.post(route("updateUserRole", selectedUser.value));
-        // updateForm.post(route("updateRole", edit.value));
+        editPrompt.value = false;
+        updateForm.roles = [];
+        updateForm.selectedUser = "",
+        updateForm.confirm == false;
         $q.notify({
             message: "Role succesfully Updated",
             color: "purple",
             position: "bottom",
             actions: [{ label: "Dismiss", color: "white" }],
         });
-    } else if (updateForm.roles === "") {
+    } else if (updateForm.confirm == false) {
         $q.notify({
-            message: "Please Enter a Role",
+            message: "Please Confirm",
             color: "red",
             position: "bottom",
             actions: [{ label: "Dismiss", color: "white" }],
         });
     }
 };
+// const onSubmit = async () => {
+//   try {
+//     console.log(updateForm.confirm);
+
+//     if (updateForm.confirm) {
+//       await updateForm.post(route("updateUserRole", selectedUser.value));
+//       editPrompt.value = false;
+//       updateForm.roles = [];
+//       updateForm.selectedUser = "";
+//       updateForm.confirm = false;
+
+//       $q.notify({
+//         message: "Role successfully Updated",
+//         color: "purple",
+//         position: "bottom",
+//         actions: [{ label: "Dismiss", color: "white" }],
+//       });
+//     } else {
+//       $q.notify({
+//         message: "Please Confirm",
+//         color: "red",
+//         position: "bottom",
+//         actions: [{ label: "Dismiss", color: "white" }],
+//       });
+//     }
+//   } catch (error) {
+//     console.error("Error updating role:", error);
+
+//     $q.notify({
+//       message: "An error occurred while updating the role",
+//       color: "red",
+//       position: "bottom",
+//       actions: [{ label: "Dismiss", color: "white" }],
+//     });
+//   }
+// };
 
 </script>

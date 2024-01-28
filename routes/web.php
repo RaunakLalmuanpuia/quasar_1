@@ -12,6 +12,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationSeenController;
 use App\Http\Controllers\PaytmController;
 use App\Http\Controllers\AttendenceController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,11 +70,6 @@ Route::resource('gallery', GalleryController::class)->middleware([
 ]);
 
 
-// Route::resource('users', UserController::class)->middleware([
-//     'auth:sanctum',
-//     config('jetstream.auth_session'),
-//     'verified',
-// ]);
 
 
 Route::get('/setup', function () {
@@ -128,5 +124,11 @@ Route::put('role/{role}', [ApplyRoleController::class, 'updateRole'])->name('upd
 Route::delete('role/{role}', [ApplyRoleController::class, 'destroyRole'])->name('destroyRole');
 
 // Assign roles to users
-Route::get('users', [ApplyRoleController::class, 'users'])->name('users');
+Route::get('usersRole', [ApplyRoleController::class, 'users'])->name('usersRole');
 Route::post('users/{users}', [ApplyRoleController::class, 'updateUserRole'])->name('updateUserRole');//Assign user role
+
+Route::resource('users', UserController::class)->middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+]);
