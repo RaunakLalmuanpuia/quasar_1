@@ -12,6 +12,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationSeenController;
 use App\Http\Controllers\PaytmController;
 use App\Http\Controllers\AttendenceController;
+use App\Http\Controllers\PythonController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -132,3 +133,14 @@ Route::resource('users', UserController::class)->middleware([
     config('jetstream.auth_session'),
     'verified',
 ]);
+
+Route::get('/notesheet', function () {
+    $initialContent = 'Initial content here';
+//    return Inertia::render('Notesheet',[
+//     "initialContent" => $initialContent,
+// ]);
+return 'Testings';
+})->middleware(['auth:sanctum', 'verified', 'role:admin'])->name('notesheet');
+
+
+Route::get('/python', [PythonController::class, 'testPythonScript'])->name('python');

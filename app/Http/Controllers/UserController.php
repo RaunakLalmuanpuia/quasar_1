@@ -63,7 +63,7 @@ class UserController extends Controller
         $user->syncRoles($request->role);
 
          //SMS
-         $phone = "7640876052";
+         $phone = "9863736583";
          $message = 'Chibai '.$user->name.', '.$this->DOMAIN_NAME.'.mizoram.gov.in ah in Department Nodal Officer in a register che tih hriattir I ni e. EGOV-MZ';
          $templateId ='1407170608242353930';
         //  $message = 'Hello '.$user->name.', you have been registered to '.$this->DOMAIN_NAME.'.mizoram.gov.in by your Department Nodal Officer, '.$name.'. EGOV-MZ';

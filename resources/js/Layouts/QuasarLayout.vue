@@ -100,8 +100,13 @@
                     :href="route('gallery.create')"
                     label="Users"
                 /> -->
+                <!-- condition to check if user has role or not -->
+                <q-route-tab v-if="$page.props.auth.user.roles.some(role =>role.name === 'admin')"
+                 :href="route('notesheet')" label="Contact Admin" />
 
-                <q-route-tab to="/page3" label="Contact" />
+                 <q-route-tab v-if="$page.props.auth.user.roles.some(role =>role.name === 'admin')"
+                 :href="route('python')" label="Python" />
+                
                 <q-route-tab
                     v-if="$page.props.user.roles.length == 0"
                     :href="route('showQr')"
@@ -138,6 +143,7 @@
                      label="Create User"
                  />
             </q-tabs>
+            {{ $page.props.auth.user.roles.some(role =>role.name === 'admin')}}
         </q-header>
 
         <q-drawer v-model="leftDrawerOpen" side="left" bordered>
