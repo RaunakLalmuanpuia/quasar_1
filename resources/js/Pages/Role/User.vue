@@ -37,13 +37,25 @@
             </span>
           </td>
           <td>
-            <span
-              v-for="roles in user.roles"
-              :key="roles.id"
+            <!-- <span
+              v-for="permissions in user.roles.permissions"
+              :key="permissions.id"
               class="px-2 py-1 text-xs text-blue-700 bg-blue-300 rounded-xl"
             >
-              {{ roles.permissions.name }}
-            </span>
+              {{ permissions.name }}
+            </span> -->
+            <span
+                v-for="role in user.roles"
+                :key="role.id"
+              >
+                <span
+                  v-for="permission in role.permissions"
+                  :key="permission.id"
+                  class="px-2 py-1 text-xs text-blue-700 bg-blue-300 rounded-xl"
+                >
+                  {{ permission.name }}
+                </span>
+              </span>
           </td>
           <!-- <td>
             <span

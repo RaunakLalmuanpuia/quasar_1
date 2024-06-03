@@ -184,7 +184,7 @@ class ApplyRoleController extends Controller
             $query->orwhere('email', 'like', "%{$search}%");
             // $query->orwhere('roles', 'like', "%{$search}%");
         })
-        ->with('roles', 'permissions')
+        ->with('roles.permissions')
         ->select('id','name', 'email')
         ->paginate(10)
         ->withQueryString();
@@ -193,6 +193,7 @@ class ApplyRoleController extends Controller
              'roles' => $roles,
              'filters' => $request->only(['search'])
          ]);
+         log($users);
      }
 
      public function updateUserRole(Request $request, User $user)
