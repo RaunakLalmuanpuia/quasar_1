@@ -2,26 +2,27 @@
      <QuasarLayout>
       <div class="flex justify-between mt-4">
         <h3>User Roles</h3>
-        <input v-model="search" type="text" placeholder="Search..." class="border px-2 rounded-lg mr-2">
+        <input v-model="search" type="text" placeholder="Search..." class="px-2 mr-2 border rounded-lg">
       </div>
        
-        <!-- {{ users }} -->
-      <!-- {{ roles }} -->
-  <div class="overflow-x-auto mt-4">
+        
+      {{ roles }}
+  <div class="mt-4 overflow-x-auto">
     
-    <table class="w-full table-auto rounded-xl border border-gray-300 bg-white text-left shadow-sm divide-y">
+    <table class="w-full text-left bg-white border border-gray-300 divide-y shadow-sm table-auto rounded-xl">
       <thead>
         <tr class="bg-gray-500/5">
           <th class="px-4 py-2">ID</th>
           <th>Name</th>
           <th>Email</th>
           <th>Roles</th>
+          <th>Permission</th>
           <!-- <th>Created At</th> -->
           <th class="px-4"></th>
         </tr>
       </thead>
       <!-- {{users.data  }} -->
-      <tbody class="whitespace-nowrap divide-y">
+      <tbody class="divide-y whitespace-nowrap">
         <tr v-for="user in users.data" :key="user.id">
           <td class="px-4 py-3">{{ user.id }}</td>
           <td>{{ user.name }}</td>
@@ -30,9 +31,18 @@
             <span
               v-for="role in user.roles"
               :key="role.id"
-              class="rounded-xl bg-blue-300 px-2 py-1 text-xs text-blue-700"
+              class="px-2 py-1 text-xs text-blue-700 bg-blue-300 rounded-xl"
             >
               {{ role.name }}
+            </span>
+          </td>
+          <td>
+            <span
+              v-for="roles in user.roles"
+              :key="roles.id"
+              class="px-2 py-1 text-xs text-blue-700 bg-blue-300 rounded-xl"
+            >
+              {{ roles.permissions.name }}
             </span>
           </td>
           <!-- <td>
@@ -100,7 +110,7 @@
                 />
               </div>
 
-            <button class="rounded-md bg-gray-800 px-4 py-2 text-xs font-semibold text-white hover:bg-gray-700" type="submit">
+            <button class="px-4 py-2 text-xs font-semibold text-white bg-gray-800 rounded-md hover:bg-gray-700" type="submit">
             SAVE
             </button>
         </form>

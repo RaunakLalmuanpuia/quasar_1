@@ -142,6 +142,11 @@
                      :href="route('users.index')"
                      label="Create User"
                  />
+                 <q-route-tab
+                     v-if="$page.props.user.roles.includes('admin')"
+                     :href="route('permissions')"
+                     label="Permission"
+                 />
             </q-tabs>
             {{ $page.props.auth.user.roles.some(role =>role.name === 'admin')}}
         </q-header>

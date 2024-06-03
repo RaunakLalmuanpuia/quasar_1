@@ -12,6 +12,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationSeenController;
 use App\Http\Controllers\PaytmController;
 use App\Http\Controllers\AttendenceController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PythonController;
 use App\Http\Controllers\UserController;
 
@@ -125,8 +126,14 @@ Route::put('role/{role}', [ApplyRoleController::class, 'updateRole'])->name('upd
 Route::delete('role/{role}', [ApplyRoleController::class, 'destroyRole'])->name('destroyRole');
 
 // Assign roles to users
-Route::get('usersRole', [ApplyRoleController::class, 'users'])->name('usersRole');
-Route::post('users/{users}', [ApplyRoleController::class, 'updateUserRole'])->name('updateUserRole');//Assign user role
+Route::get('usersRole', [ApplyRoleController::class, 'users'])->middleware(['role:admin'])->name('usersRole');
+Route::post('users/{users}', [ApplyRoleController::class, 'updateUserRole'])->middleware(['role:admin'])->name('updateRole');//Assign user role
+
+
+Route::get('permissions', [PermissionController::class, 'index'])->middleware(['role:admin'])->name('permissions');
+Route::post('permission', [PermissionController::class,'store'])->middleware(['role:admin'])->name('createPermission');
+Route::put('permissions/{permissions}', [PermissionController::class, 'update'])->middleware(['role:admin'])->name('updatePermission');
+Route::delete('permissions/{permissions}', [PermissionController::class, 'destroy'])->middleware(['role:admin'])->name('destroyPermission');
 
 Route::resource('users', UserController::class)->middleware([
     'auth:sanctum',

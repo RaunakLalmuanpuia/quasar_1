@@ -184,7 +184,7 @@ class ApplyRoleController extends Controller
             $query->orwhere('email', 'like', "%{$search}%");
             // $query->orwhere('roles', 'like', "%{$search}%");
         })
-        ->with('roles')
+        ->with('roles', 'permissions')
         ->select('id','name', 'email')
         ->paginate(10)
         ->withQueryString();
